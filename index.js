@@ -66,21 +66,32 @@ app.delete('/api/products/:pid', async (req, res) => {
     }
 })
 
-app.get('/api/carts/:cid', async(req, res) => {
+
+app.post('/api/carts/', async (req, res) => {
+    try {
+        const newCart = await CartManager.addCart();
+        res.status(201).json({ message: "Carrito agregado con éxito", newCart });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
+
+app.get('/api/carts/:cid', async (req, res) => {
     try {
         const cid = req.params.cid;
-        const cartProducts = CartManager.getCartById(cid);
+        const cartProducts = await CartManager.getCartById(cid);
         res.status(200).json({ message: `Productos del carrito con id ${cid} obtenidos con éxito`, cartProducts });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 })
 
-app.post('/api/carts/', async (req, res) => {
+app.post('/api/carts/:cid/product/:pid', async (req, res) => {
     try {
-        const {products} = req.body;
-        const newCart = await CartManager.addCart(products);
-        res.status(201).json({ message: "Carrito agregado con éxito", newCart });
+        const cid = req.params.cid;
+        const pid = req.params.pid;
+        const updatedCart = await CartManager.addProductToCart(cid, pid);
+        res.status(200).json({ message: `Producto agregado al carrito`, updatedCart });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
