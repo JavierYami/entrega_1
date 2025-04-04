@@ -1,0 +1,30 @@
+[
+  {
+    "id": 2,
+    "title": "Cafetera Italiana",
+    "description": "Cafetera de aluminio para preparar espresso en casa. Capacidad de 6 tazas.",
+    "code": "CAF1213",
+    "price": 450,
+    "status": true,
+    "stock": 25,
+    "category": "Electrodomésticos",
+    "thumbnails": [
+      "/images/cafetera1.jpg",
+      "/images/cafetera2.jpg"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Cafetera Italiana",
+    "description": "Cafetera de aluminio para preparar espresso en casa. Capacidad de 6 tazas.",
+    "code": "21321",
+    "price": 450,
+    "status": true,
+    "stock": 25,
+    "category": "Electrodomésticos",
+    "thumbnails": [
+      "/images/cafetera1.jpg",
+      "/images/cafetera2.jpg"
+    ]
+  }
+]
