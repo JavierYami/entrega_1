@@ -43,22 +43,28 @@ class CartManager {
 
         if(!cart) throw new Error("El carrito no existe")
 
-        return cart;
+        return cart.products;
     }
 
     async addProductToCart (cid, pid) {
 
         const carts = await this.getCarts();
 
-        const cart = await this.getCartById(cid);
+        const products = await this.getCartById(cid);
 
-        if(cart.products.length === 0) cart.products.push({product: pid, quantity: 1});
+        const product = products.find(product => parseInt(product.product) === parseInt(pid))
+        
+        if(!product) products.push({product: pid, quantity: 1});
 
-        const index = cart.products.findIndex(product => parseInt(product.product) === parseInt(pid));
+        else product.quantity++;
 
-        cart.products[index] = {...cart.products[index], ...cart.products[index].quantity++};
+        const index = carts.findIndex(cart => parseInt(cart.id) === parseInt(cid));
 
-        await fs.promises.writeFile(this.path, JSON.stringify([...carts, cart ], null, 2));
+        carts[index].products = products;
+
+        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
+
+        return products;
     }
 }
 
