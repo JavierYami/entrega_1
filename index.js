@@ -52,7 +52,7 @@ app.post('/api/products/', async (req, res) => {
     }
 })
 
-app.post('/api/products/:pid', async (req, res) => {
+app.put('/api/products/:pid', async (req, res) => {
     try {
         const pid = req.params.pid;
         const updatedData = req.body;
