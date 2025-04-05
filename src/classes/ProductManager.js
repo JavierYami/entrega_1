@@ -32,7 +32,7 @@ class ProductManager {
 
     async addProduct ({title, description, code, price, status, stock, category, thumbnails}) {
 
-        if(!title || !description || !code || !price || !status || !stock || !category || !thumbnails) {
+        if(!title || !description || !code || !price || !status || !category || !thumbnails) {
             throw new Error ("Datos incompletos");
         }
 
@@ -69,7 +69,7 @@ class ProductManager {
     async deleteProduct (id) {
 
         const products = await this.getProducts();
-
+        
         const updatedProducts = products.filter(product => parseInt(product.id) !== parseInt(id));
 
         await fs.promises.writeFile(this.path, JSON.stringify(updatedProducts, null, 2));

@@ -1,9 +1,9 @@
 const express = require('express');
-const PM = require('./ProductManager');
-const CM = require('./CartManager');
+const PM = require('./src/classes/ProductManager');
+const CM = require('./src/classes/CartManager');
 
-const ProductManager = new PM('./products.json');
-const CartManager = new CM("./carts.json")
+const ProductManager = new PM('./db/products.json');
+const CartManager = new CM("./db/carts.json")
 
 
 
