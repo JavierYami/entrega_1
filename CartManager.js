@@ -59,16 +59,7 @@ class CartManager {
         cart.products[index] = {...cart.products[index], ...cart.products[index].quantity++};
 
         await fs.promises.writeFile(this.path, JSON.stringify([...carts, cart ], null, 2));
-
-
-
     }
-
-
-
-
-
-
 }
 
 module.exports = CartManager;
