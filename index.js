@@ -1,11 +1,18 @@
 const express = require('express');
 const PM = require('./src/classes/ProductManager');
 const CM = require('./src/classes/CartManager');
+const path = require('path');
+const fs = require('fs')
+
 
 const ProductManager = new PM('./db/products.json');
 const CartManager = new CM("./db/carts.json")
 
+const dbFolder = path.join(__dirname, 'db');
 
+if (!fs.existsSync(dbFolder)) {
+    fs.mkdirSync(dbFolder, { recursive: true });
+}
 
 const app = express();
 const PORT = 8080;
