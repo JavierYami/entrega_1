@@ -1,6 +1,9 @@
 const express = require('express');
-const PM = require('./src/classes/ProductManager');
-const CM = require('./src/classes/CartManager');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const PM = require('./classes/ProductManager');
+const CM = require('./classes/CartManager');
+const exphbs = require('express-handlebars');
 const path = require('path');
 const fs = require('fs')
 
@@ -8,20 +11,30 @@ const fs = require('fs')
 const ProductManager = new PM('./db/products.json');
 const CartManager = new CM("./db/carts.json")
 
-const dbFolder = path.join(__dirname, 'db');
+const dbFolder = path.join(__dirname, '..', 'db');
 
 if (!fs.existsSync(dbFolder)) {
     fs.mkdirSync(dbFolder, { recursive: true });
 }
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer);
+
+
 const PORT = 8080;
 
-app.use(express.json());
+app.engine('handlebars', exphbs.engine());
+app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'views'));
 
-app.listen(PORT, () => {
-    console.log(`Servidor escuchando en el puerto ${PORT}`);
-});
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+httpServer.listen(PORT, () => {
+    console.log('Servidor escuchando en puerto', PORT);
+  });
 
 app.get('/api/products/', async (req, res) => {
     try {
@@ -103,3 +116,46 @@ app.post('/api/carts/:cid/product/:pid', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 })
+
+//HandleBars
+
+app.get('/realtimeproducts', (req, res) => {
+    res.render('realTimeProducts');
+});
+
+app.get('/home', async (req, res) => {
+    const products = await ProductManager.getProducts();
+    res.render('home', { products });
+});
+
+
+io.on('connection', async (socket) => {
+    const products = await ProductManager.getProducts();
+    socket.emit('product-list', products);
+
+    socket.on('new-product', async (data) => {
+
+        const newProduct = {
+            ...data,
+            description: data.description || "Sin descripción",
+            code: data.code || Math.random().toString(36).substring(2, 10),
+            price: Number(data.price) || 0,
+            status: true,
+            stock: data.stock || 10,
+            category: data.category || "General",
+            thumbnails: []
+        };
+        await ProductManager.addProduct(newProduct);
+        const updatedProducts = await ProductManager.getProducts();
+        io.emit('product-list', updatedProducts);
+    });
+
+    socket.on('delete-product', async (id) => {
+        await ProductManager.deleteProduct(id);
+        const updatedProducts = await ProductManager.getProducts();
+        io.emit('product-list', updatedProducts);
+    });
+
+});
+
+
