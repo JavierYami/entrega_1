@@ -22,7 +22,7 @@ socket.on('product-list', (products) => {
     productList.appendChild(li);
     const btn = document.createElement('button');
     btn.textContent = 'Eliminar';
-    btn.onclick = () => socket.emit('delete-product', p.id);
+    btn.onclick = () => socket.emit('delete-product', p._id);
     li.appendChild(btn);
   });
 });
