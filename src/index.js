@@ -41,7 +41,7 @@ const connectMongoDB = async () => {
     catch (error) {
         console.log(error)
     }
-}
+} 
 
 connectMongoDB();
 
