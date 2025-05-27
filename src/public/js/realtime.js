@@ -81,7 +81,9 @@ socket.on('product-list', ({payload, totalPages, prevPage, nextPage, hasNextPage
     productCard.innerHTML = `
       <h3>${p.title}</h3>
       <p class="price">$${p.price}</p>
-      <p>${p.description || ''}</p>
+      <p>Precio: ${p.price}</p>
+      <p>Categoria: ${p.category}</p>
+      <p>Descripción: ${p.description || ''}</p>
       <div class="actions">
         <a href="/products/${p._id}" class="view-details">Ver detalles</a>
         <button onclick="addToCart('${p._id}')" class="add-to-cart">Agregar al carrito</button>
