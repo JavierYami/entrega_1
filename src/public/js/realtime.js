@@ -58,7 +58,7 @@ function updateProducts() {
 }
 
 function addToCart(productId) {
-  fetch(`/api/carts/{{cartId}}/product/${productId}`, {
+  fetch(`/api/carts/683506f7c61fbcaf06fb3815/product/${productId}`, {
     method: 'POST',
   })
   .then(response => response.json())
