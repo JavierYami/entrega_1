@@ -1,8 +1,8 @@
 import { Product } from "../models/products.js";
 
 class ProductService {
-    getProducts = async () => {
-        const products = await Product.find();
+    getProducts = async (limit, page, sort, query) => {
+        const products = await Product.find().limit(limit ?? 10).skip(page ?? 1).sort(sort ?? null).where({query});
         return products;
     }
 

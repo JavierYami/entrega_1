@@ -2,7 +2,8 @@ import productService from "../services/products.services.js";
 
 const getProducts = async (req, res) => {
     try {
-        const products = await productService.getProducts();
+        const {limit, page, sort, query} = req.query;
+        const products = await productService.getProducts(limit, page, sort, query);
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({message: error.message});
