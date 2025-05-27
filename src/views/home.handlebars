@@ -1,6 +1,6 @@
 <h1>Productos</h1>
 <ul>
-  {{#each products}}
+  {{#each products.payload}}
     <li>{{this.title}} - {{this.price}}</li>
   {{/each}}
 </ul>

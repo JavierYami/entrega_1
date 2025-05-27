@@ -47,8 +47,12 @@ connectMongoDB();
 
 //HandleBars
 
-app.get('/realtimeproducts', (req, res) => {
-    res.render('realTimeProducts');
+app.get('/realtimeproducts', async (req, res) => {
+    const products = await productService.getProducts();
+    const allProducts = await productService.getAllProducts();
+    const categories = [...new Set(allProducts.map(p => p.category))];
+    const defaultCartId = '65f3c0a37a7c2c98a3c0b5a0'; // Usa el mismo ID que en la ruta de productos
+    res.render('realTimeProducts', { categories, cartId: defaultCartId });
 });
 
 app.get('/home', async (req, res) => {
@@ -56,13 +60,31 @@ app.get('/home', async (req, res) => {
     res.render('home', { products });
 });
 
+app.get('/products/:pid', async (req, res) => {
+    try {
+        const product = await productService.getProductById(req.params.pid);
+        if (!product) {
+            return res.status(404).render('error', { message: 'Producto no encontrado' });
+        }
+        const defaultCartId = '65f3c0a37a7c2c98a3c0b5a0'; // Asegúrate de usar un ID válido de tu base de datos
+        res.render('product', { product, cartId: defaultCartId });
+    } catch (error) {
+        res.status(500).render('error', { message: 'Error al cargar el producto' });
+    }
+});
 
 io.on('connection', async (socket) => {
     const products = await productService.getProducts();
     socket.emit('product-list', products);
 
-    socket.on('new-product', async (data) => {
+    socket.on('request-products', async (data) => {
+        const { page = 1, category = '', sort = '' } = data;
+        const query = category ? { category } : {};
+        const products = await productService.getProducts(10, page, sort, query);
+        socket.emit('product-list', products);
+    });
 
+    socket.on('new-product', async (data) => {
         const newProduct = {
             ...data,
             description: data.description || "Sin descripción",
@@ -74,16 +96,15 @@ io.on('connection', async (socket) => {
             thumbnails: []
         };
         await productService.addProduct(newProduct);
-        const updatedProducts = await productService.getProducts();
+        const updatedProducts = await productService.getProducts(10, currentPage);
         io.emit('product-list', updatedProducts);
     });
 
     socket.on('delete-product', async (id) => {
         await productService.deleteProduct(id);
-        const updatedProducts = await productService.getProducts();
+        const updatedProducts = await productService.getProducts(10, currentPage);
         io.emit('product-list', updatedProducts);
     });
-
 });
 
 

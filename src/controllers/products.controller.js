@@ -2,8 +2,25 @@ import productService from "../services/products.services.js";
 
 const getProducts = async (req, res) => {
     try {
-        const {limit, page, sort, query} = req.query;
-        const products = await productService.getProducts(limit, page, sort, query);
+        const {limit, page, sort} = req.query;
+        
+        const queryObject = {};
+        
+        if (req.query.category) {
+            queryObject.category = req.query.category;
+        }
+        
+        if (req.query.status !== undefined) {
+            queryObject.status = req.query.status === "true";
+        }
+
+        const products = await productService.getProducts(
+            parseInt(limit),
+            parseInt(page),
+            sort,
+            queryObject
+        );
+        
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({message: error.message});

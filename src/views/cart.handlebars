@@ -1,0 +1,82 @@
+<div class="cart-container">
+    <h1>Carrito de Compras</h1>
+    {{#if cart.products.length}}
+        <ul class="cart-list">
+            {{#each cart.products}}
+                <li class="cart-item">
+                    <div class="product-info">
+                        <h3>{{this.product.title}}</h3>
+                        <p>Precio: ${{this.product.price}}</p>
+                        <p>Cantidad: {{this.quantity}}</p>
+                        <p>Subtotal: ${{multiply this.product.price this.quantity}}</p>
+                    </div>
+                    <button class="remove-btn" onclick="removeFromCart('{{this.product._id}}')">Eliminar</button>
+                </li>
+            {{/each}}
+        </ul>
+        <div class="cart-total">
+            <h3>Total: ${{cartTotal}}</h3>
+        </div>
+    {{else}}
+        <p>No hay productos en el carrito</p>
+    {{/if}}
+</div>
+
+<script>
+function removeFromCart(productId) {
+    fetch(`/api/carts/{{cart._id}}/products/${productId}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        location.reload();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al eliminar el producto');
+    });
+}
+</script>
+
+<style>
+.cart-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.cart-list {
+    list-style: none;
+    padding: 0;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.remove-btn {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.remove-btn:hover {
+    background-color: #cc0000;
+}
+
+.cart-total {
+    text-align: right;
+    margin-top: 20px;
+    padding: 15px;
+    border-top: 2px solid #ddd;
+}
+</style> 
