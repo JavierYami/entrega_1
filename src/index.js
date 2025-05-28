@@ -19,7 +19,12 @@ const io = new Server(httpServer);
 
 const PORT = 8080;
 
-app.engine('handlebars', exphbs.engine());
+app.engine('handlebars', exphbs.engine({
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true
+    }
+}));
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());

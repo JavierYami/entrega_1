@@ -77,6 +77,14 @@ class CartService {
         await cart.save();
         return await Cart.findById(cid).populate('products.product');
     }
+
+    emptyCart = async (cid) => {
+        const cart = await Cart.findById(cid);
+        if (!cart) throw new Error('Carrito no encontrado');
+        cart.products = [];
+        await cart.save();
+        return await Cart.findById(cid).populate('products.product');
+    }
 }
 
 export default new CartService();
